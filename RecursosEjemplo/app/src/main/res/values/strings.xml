@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">RecursosEjemplo</string>
+
+    <string name="introduccion">
+
+        Bienvenidos a esta aplicación, en donde vamos a ver el uso de strings como recursos,
+        haciendo referencia a ellos, no incluyéndolos.
+
+    </string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/iCrearNuevo"
+        android:icon="@drawable/icono_guardar_contacto"
+        android:title="Crear nuevo contacto"
+        app:showAsAction="always" />
+</menu>

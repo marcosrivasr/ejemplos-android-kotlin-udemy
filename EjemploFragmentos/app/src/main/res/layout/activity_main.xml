@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tvNombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nombre"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+    <Button
+        android:id="@+id/bAdd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Añadir fragmento" />
+
+    <Button
+        android:id="@+id/bReplace"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reemplazar fragmento" />
+
+
+</LinearLayout>
