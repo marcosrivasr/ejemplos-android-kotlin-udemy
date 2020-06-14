@@ -6,13 +6,19 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
+import android.widget.Toast
+import com.google.gson.Gson
 import com.vidamrr.ejemplobdoffline.Modelo.Alumno
 import com.vidamrr.ejemplobdoffline.R
 import com.vidamrr.ejemplobdoffline.RecyclerView.AdaptadorCustom
 import com.vidamrr.ejemplobdoffline.RecyclerView.ClickListener
 import com.vidamrr.ejemplobdoffline.RecyclerView.LongClickListener
 import com.vidamrr.ejemplobdoffline.SQLite.AlumnoCRUD
+import com.vidamrr.ejemplobdoffline.Utilidades.HttpResponse
+import com.vidamrr.ejemplobdoffline.Utilidades.Network
+import com.vidamrr.ejemplobdoffline.Modelo.Alumnos
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     var alumnos:ArrayList<Alumno>? = null
     var crud: AlumnoCRUD? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,21 +47,55 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, NuevoAlumno::class.java))
         }
 
-        crud = AlumnoCRUD(this)
+        val network = Network(this)
+        val activity = this.applicationContext
+        val gson = Gson()
 
+        crud = AlumnoCRUD(this)
         alumnos = crud?.getAlumnos()
 
-        adaptador = AdaptadorCustom(alumnos!!, object : ClickListener {
+        network.httpRequest(
+                activity,
+                "http://192.168.0.22:80/alumnos/",
+                object: HttpResponse {
+
+            override fun httpResponseSuccess(response: String) {
+                Log.d("response", response)
+
+                val alumnosAPI = gson.fromJson(response, Alumnos::class.java).items
+
+                for (alumno in alumnos!!){
+                    crud?.deleteAlumno(alumno)
+                }
+                for ( alumno in alumnosAPI!! ){
+                    crud?.newAlumno(Alumno(alumno.id!!, alumno.nombre!!))
+                }
+
+                alumnos = crud?.getAlumnos()
+                configurarAdaptador(alumnos!!)
+            }
+
+            override fun httpErrorResponse(response: String) {
+                Toast.makeText(activity, "Error al hacer la solicitud HTTP", Toast.LENGTH_SHORT).show()
+                configurarAdaptador(alumnos!!)
+            }
+        } )
+
+
+    }
+
+    fun configurarAdaptador(data: ArrayList<Alumno>){
+        this.adaptador = AdaptadorCustom(data!!, object : ClickListener {
             override fun onClick(vista: View, index: Int) {
                 //click
                 val intent = Intent(applicationContext, DetalleAlumno::class.java)
-                intent.putExtra("ID", alumnos!!.get(index).id)
+                intent.putExtra("ID", data!!.get(index).id)
                 startActivity(intent)
             }
         }, object : LongClickListener {
             override fun longClick(vista: View, index: Int) {}
         })
 
-        lista?.adapter = adaptador
+        this.lista?.adapter = this.adaptador
     }
 }
